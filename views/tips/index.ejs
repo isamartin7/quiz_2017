@@ -20,8 +20,8 @@
 
             <% } %>
 
-            <% if ((session.user && (session.user.isAdmin || (quizAuthorId && quizAuthorId === session.user.id)))) { %>
-
+            <% if ((session.user && (session.user.isAdmin || (quizAuthorId && quizAuthorId === session.user.id) || session.user.id === tip.AuthorId))) { %>
+<span id="autor"><%= tip.Author ? tip.Author.username : "Pepe" %> </span>
                 <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE"><button>Borrar</button></a>
 
             <% } %>
