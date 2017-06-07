@@ -207,7 +207,33 @@ exports.play = function (req, res, next) {
         answer: answer
     });
 };
-
+// GET /quizzes/:quizId/random_play
+exports.random_play = function (req, res, next) {
+    req.session.score = req.session.score || 0;
+    var answer = req.query.answer || '';
+     models.Quiz.findAll()
+    .then(function (quizzes) {
+            req.session.quizzes = req.session.quizzes || quizzes;
+            var num_quizzes = req.session.quizzes.length;
+            var random_index;
+            var quiz=0;
+            while(quiz===0){
+                random_index= Math.floor(Math.random()*num_quizzes);
+                quiz=req.session.quizzes[random_index];
+            }
+            req.session.quizzes[random_index]=0;
+            res.render('quizzes/random_play',{
+                 quiz: quiz,
+                 answer: answer,
+                 score: req.session.score
+            });
+             
+        
+   })
+    .catch(function (error) {
+        next(error);
+    });
+};
 
 // GET /quizzes/:quizId/check
 exports.check = function (req, res, next) {
@@ -221,4 +247,40 @@ exports.check = function (req, res, next) {
         result: result,
         answer: answer
     });
+};
+
+// GET /quizzes/:quizId/random_check
+exports.random_check = function (req, res, next) {
+
+    var answer = req.query.answer || "";
+    var quizzes = req.session.quizzes;
+
+    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+    if(result){
+        req.session.score++;
+        var score=req.session.score;
+    }else{
+        var score=req.session.score;
+         req.session.score=undefined;
+         req.session.quizzes=undefined;
+    }
+    if(quizzes.length===score){
+         req.session.score=undefined;
+         req.session.quizzes=undefined;
+        res.render('quizzes/random_nomore', {
+        quiz: req.quiz,
+        result: result,
+        answer: answer,
+        score:score
+
+    });
+    }else{
+    res.render('quizzes/random_result', {
+        quiz: req.quiz,
+        result: result,
+        answer: answer,
+        score:score
+
+       });
+    }
 };

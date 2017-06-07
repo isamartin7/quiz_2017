@@ -9,6 +9,7 @@ var partials = require('express-partials');
 var flash = require('express-flash');
 var methodOverride = require('method-override');
 
+
 var index = require('./routes/index');
 
 var app = express();
@@ -41,6 +42,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', index);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
